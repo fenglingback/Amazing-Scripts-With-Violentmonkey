@@ -9,6 +9,7 @@
 
 
 
+let timeoutIds = [];
 // 创建按钮
 var btn = document.createElement("button");
 btn.id = "backToTopBtn";
@@ -34,14 +35,30 @@ btn.style.transition = "background-color 0.5s, color 0.5s"; // 渐变效果
 var svg = btn.querySelector("svg");
 svg.style.transition = "stroke 0.5s";
 
+function hideBtn() {
+    btn.style.display = "none";
+}
+
+/**
+ * 
+ * @param {number} delay 延迟时间，单位ms
+ */
+function delayHide(delay) {
+    timeoutIds.forEach(clearTimeout);
+    const id = setTimeout(hideBtn, delay);
+    timeoutIds.push(id);
+}
+
 // 悬停时反转颜色
 btn.onmouseover = function () {
+    timeoutIds.forEach(clearTimeout);
     btn.style.backgroundColor = "black";
     svg.querySelector("path").style.stroke = "white";
 };
 btn.onmouseout = function () {
     btn.style.backgroundColor = "white";
     svg.querySelector("path").style.stroke = "black";
+    delayHide(3000);
 };
 
 // 回到顶
@@ -66,12 +83,14 @@ function clickHandler(e) {
 document.body.appendChild(btn);
 
 function scrollFunction() {
+    timeoutIds.forEach(clearTimeout);
     if (window.innerWidth < 1000) {
-        btn.style.display = "none";
+        hideBtn();
     } else if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
         btn.style.display = "block";
+        delayHide(3000);
     } else {
-        btn.style.display = "none";
+        hideBtn();
     }
 }
 
@@ -87,9 +106,5 @@ if (window.innerWidth >= 1000) {
 
 // 当窗口大小改变时检查窗口宽度
 window.onresize = function () {
-    if (window.innerWidth < 1000) {
-        btn.style.display = "none";
-    } else {
-        scrollFunction();
-    }
+    scrollFunction();
 };
