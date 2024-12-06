@@ -8,7 +8,7 @@
 // ==/UserScript==
 
 
-let targetName = ["gotop"];
+let targetName = ["gotop", "el-backtop"];
 
 function getUniqueClassAndIds() {
     const classes = new Set();
