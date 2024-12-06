@@ -7,7 +7,8 @@
 // @description 2024/7/21 08:59:17
 // ==/UserScript==
 
-let targetName = ["gotop", "el-backtop"];
+
+let targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki"];
 let timeoutIds = [];
 
 // 创建按钮
@@ -68,11 +69,13 @@ btn.addEventListener("click", () => {
 document.body.appendChild(btn);
 
 
-function getUniqueClassAndIds() {
+function getUniqueClassIdTitle() {
     const classes = new Set();
     const ids = new Set();
+    const titles = new Set();
 
-    const elements = document.querySelectorAll('*');
+    // 获取页面中所有div、a、span、button元素
+    const elements = document.querySelectorAll('div, a, span, button');
 
     elements.forEach(element => {
         const className = element.className;
@@ -81,27 +84,38 @@ function getUniqueClassAndIds() {
             className.split(/\s+/).forEach(cls => classes.add(cls));
         }
         const id = element.id;
-        if (id) {
+        if (typeof id === 'string' && id.length > 0) {
             ids.add(id);
+        }
+
+        const title = element.getAttribute('title');
+        if (title) {
+            titles.add(title);
         }
     });
 
     const uniqueClasses = Array.from(classes);
     const uniqueIds = Array.from(ids);
+    const uniqueTitles = Array.from(titles);
 
     // console.log(uniqueClasses);
     // console.log(uniqueIds);
 
-    return { uniqueClasses, uniqueIds };
+    return { uniqueClasses, uniqueIds, uniqueTitles };
 }
 
-
-
 function checkBtn() {
-    const { uniqueClasses, uniqueIds } = getUniqueClassAndIds();
+    const { uniqueClasses, uniqueIds, uniqueTitles } = getUniqueClassIdTitle();
 
-    // 判断页面中是否存在class或id匹配的元素
-    let isMatch = targetName.some(name => uniqueClasses.includes(name) || uniqueIds.includes(name));
+    // 判断页面中是否存在特定的类名、id或title，并打印存在的类名、id或title
+    let isMatch = targetNames.some(name => {
+        if (uniqueClasses.includes(name.toLowerCase()) || uniqueIds.includes(name.toLowerCase()) || uniqueTitles.includes(name.toLowerCase())) {
+            // console.log(name);
+            return true;
+        } else {
+            return false;
+        }
+    })
 
     if (isMatch) {
         btn.style.display = "none";
@@ -130,7 +144,6 @@ function delayHide(delay) {
     }, delay);
     timeoutIds.push(id);
 }
-
 
 
 document.addEventListener("scroll", debounceCheckBtn(300), true);
