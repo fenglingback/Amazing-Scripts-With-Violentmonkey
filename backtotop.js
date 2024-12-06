@@ -2,7 +2,7 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     2.1
+// @version     2.1.1
 // @author      cxfl
 // @description 2024/7/21 08:59:17
 // ==/UserScript==
