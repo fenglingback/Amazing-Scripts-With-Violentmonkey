@@ -75,7 +75,7 @@ function getUniqueClassIdTitle() {
     const titles = new Set();
 
     // 获取页面中所有div、a、span、button元素
-    const elements = document.querySelectorAll('div, a, span, button');
+    const elements = document.querySelectorAll('div, a, span, button, img');
 
     elements.forEach(element => {
         const className = element.className;
