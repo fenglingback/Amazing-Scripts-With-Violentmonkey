@@ -8,7 +8,7 @@
 // ==/UserScript==
 
 
-let targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki"];
+let targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop"];
 let timeoutIds = [];
 
 // 创建按钮
@@ -109,7 +109,7 @@ function checkBtn() {
 
     // 判断页面中是否存在特定的类名、id或title，并打印存在的类名、id或title
     let isMatch = targetNames.some(name => {
-        if (uniqueClasses.includes(name.toLowerCase()) || uniqueIds.includes(name.toLowerCase()) || uniqueTitles.includes(name.toLowerCase())) {
+        if (uniqueClasses.includes(name) || uniqueIds.includes(name) || uniqueTitles.includes(name)) {
             // console.log(name);
             return true;
         } else {
