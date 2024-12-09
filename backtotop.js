@@ -2,15 +2,60 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     2.1.1
+// @version     1.0
 // @author      cxfl
-// @description 2024/12/7 7:55:52
+// @description 2024/7/21 08:59:17
 // ==/UserScript==
 
 
-let targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop"];
-let timeoutIds = [];
+let targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top"];
 
+function getUniqueClassIdTitle() {
+    const classes = new Set();
+    const ids = new Set();
+    const titles = new Set();
+
+    // 获取页面中所有div、a、span、button元素
+    const elements = document.querySelectorAll('div, a, span, button, img');
+
+    elements.forEach(element => {
+        const className = element.className;
+        // 检查 className 是否为字符串
+        if (typeof className === 'string' && className.length > 0) {
+            className.split(/\s+/).forEach(cls => classes.add(cls));
+        }
+        const id = element.id;
+        if (typeof id === 'string' && id.length > 0) {
+            ids.add(id);
+        }
+
+        const title = element.getAttribute('title');
+        if (title) {
+            titles.add(title);
+        }
+    });
+
+    const uniqueClasses = Array.from(classes);
+    const uniqueIds = Array.from(ids);
+    const uniqueTitles = Array.from(titles);
+
+    // console.log(uniqueClasses);
+    // console.log(uniqueIds);
+
+    return { uniqueClasses, uniqueIds, uniqueTitles };
+}
+
+function checkIsExist() {
+    const { uniqueClasses, uniqueIds, uniqueTitles } = getUniqueClassIdTitle();
+
+    const isExist = targetNames.some(name => uniqueClasses.includes(name) || uniqueIds.includes(name) || uniqueTitles.includes(name));
+    console.log(isExist);
+
+    return isExist;
+}
+
+
+let timeoutIds = [];
 // 创建按钮
 const btn = document.createElement("button");
 btn.id = "cxfl-BTT-btn";
@@ -48,13 +93,12 @@ btn.onmouseout = function () {
     delayHide(3000);
 };
 
-// 回到顶部
+// 点击时平滑滚动到顶部
 btn.addEventListener("click", () => {
     btn.style.backgroundColor = "black";
-    const svg = btn.querySelector("svg");
     svg.querySelector("path").style.stroke = "white";
     let timer = setInterval(function () {
-        var distanceY = document.documentElement.scrollTop || document.body.scrollTop; //兼容
+        var distanceY = document.documentElement.scrollTop || document.body.scrollTop;//兼容
         if (distanceY == 0) {
             clearInterval(timer);
             btn.style.backgroundColor = "white";
@@ -66,76 +110,9 @@ btn.addEventListener("click", () => {
     }, 10);
 });
 
-document.body.appendChild(btn);
+// 将按钮添加到页面中
+document.documentElement.appendChild(btn);
 
-
-function getUniqueClassIdTitle() {
-    const classes = new Set();
-    const ids = new Set();
-    const titles = new Set();
-
-    // 获取页面中所有div、a、span、button元素
-    const elements = document.querySelectorAll('div, a, span, button, img');
-
-    elements.forEach(element => {
-        const className = element.className;
-        // 检查 className 是否为字符串
-        if (typeof className === 'string' && className.length > 0) {
-            className.split(/\s+/).forEach(cls => classes.add(cls));
-        }
-        const id = element.id;
-        if (typeof id === 'string' && id.length > 0) {
-            ids.add(id);
-        }
-
-        const title = element.getAttribute('title');
-        if (title) {
-            titles.add(title);
-        }
-    });
-
-    const uniqueClasses = Array.from(classes);
-    const uniqueIds = Array.from(ids);
-    const uniqueTitles = Array.from(titles);
-
-    // console.log(uniqueClasses);
-    // console.log(uniqueIds);
-
-    return { uniqueClasses, uniqueIds, uniqueTitles };
-}
-
-function checkBtn() {
-    const { uniqueClasses, uniqueIds, uniqueTitles } = getUniqueClassIdTitle();
-
-    // 判断页面中是否存在特定的类名、id或title，并打印存在的类名、id或title
-    let isMatch = targetNames.some(name => {
-        if (uniqueClasses.includes(name) || uniqueIds.includes(name) || uniqueTitles.includes(name)) {
-            // console.log(name);
-            return true;
-        } else {
-            return false;
-        }
-    })
-
-    if (isMatch) {
-        btn.style.display = "none";
-    } else if (window.innerWidth < 1000) {
-        btn.style.display = "none";
-    } else if (document.body.scrollTop > 160 || document.documentElement.scrollTop > 160) {
-        btn.style.display = "block";
-        delayHide(3000);
-    } else {
-        btn.style.display = "none";
-    }
-}
-
-function debounceCheckBtn(delay) {
-    let timer;
-    return function () {
-        clearTimeout(timer);
-        timer = setTimeout(checkBtn, delay);
-    };
-}
 
 function delayHide(delay) {
     timeoutIds.forEach(clearTimeout);
@@ -145,15 +122,31 @@ function delayHide(delay) {
     timeoutIds.push(id);
 }
 
-
-document.addEventListener("scroll", debounceCheckBtn(300), true);
-
-// 初始检查窗口宽度
-if (window.innerWidth >= 1000) {
-    checkBtn();
+function scrollFunction() {
+    timeoutIds.forEach(clearTimeout);
+    if (window.innerWidth < 1000) {
+        btn.style.display = "none";
+    } else if (document.body.scrollTop > 160 || document.documentElement.scrollTop > 160) {
+        btn.style.display = "block";
+        delayHide(3000);
+    } else {
+        btn.style.display = "none";
+    }
 }
 
-// 当窗口大小改变时检查窗口宽度
-window.onresize = function () {
-    checkBtn();
-};
+
+if (!checkIsExist()) {
+
+    // 当页面滚动时检查是否显示按钮
+    document.addEventListener("scroll", scrollFunction, true);
+
+    // 初始检查窗口宽度
+    if (window.innerWidth >= 1000) {
+        scrollFunction();
+    }
+
+    // 当窗口大小改变时检查窗口宽度
+    window.onresize = function () {
+        scrollFunction();
+    };
+}
