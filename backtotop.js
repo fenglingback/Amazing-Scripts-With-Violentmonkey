@@ -2,13 +2,13 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     1.0
+// @version     1.1
 // @author      cxfl
 // @description 2024/7/21 08:59:17
 // ==/UserScript==
 
 
-let targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top"];
+let targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top", "scroll-top"];
 
 function getUniqueClassIdTitle() {
     const classes = new Set();
@@ -49,7 +49,6 @@ function checkIsExist() {
     const { uniqueClasses, uniqueIds, uniqueTitles } = getUniqueClassIdTitle();
 
     const isExist = targetNames.some(name => uniqueClasses.includes(name) || uniqueIds.includes(name) || uniqueTitles.includes(name));
-    console.log(isExist);
 
     return isExist;
 }
@@ -136,6 +135,7 @@ function scrollFunction() {
 
 
 if (!checkIsExist()) {
+    console.log("页面不存在回到顶部按钮，启动生成！");
 
     // 当页面滚动时检查是否显示按钮
     document.addEventListener("scroll", scrollFunction, true);
