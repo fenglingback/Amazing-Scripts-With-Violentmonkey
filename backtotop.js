@@ -2,151 +2,143 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     1.1
+// @version     1.3
 // @author      cxfl
-// @description 2024/7/21 08:59:17
+// @description 2024/12/10 08:46:34
 // ==/UserScript==
 
+(function () {
+    'use strict';
 
-let targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top", "scroll-top"];
+    const targetNames = ["gotop", "el-backtop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top", "scroll-top", "backtop", "arco-icon-arrow-up"];
 
-function getUniqueClassIdTitle() {
-    const classes = new Set();
-    const ids = new Set();
-    const titles = new Set();
+    function getUniqueClassIdTitle() {
+        const classes = new Set();
+        const ids = new Set();
+        const titles = new Set();
 
-    // 获取页面中所有div、a、span、button元素
-    const elements = document.querySelectorAll('div, a, span, button, img');
+        document.querySelectorAll('div, a, span, button, img, svg').forEach(element => {
+            if (typeof element.className === 'string') {
+                element.className.split(/\s+/).forEach(cls => classes.add(cls));
+            }
+            if (element.id) ids.add(element.id);
+            const title = element.getAttribute('title');
+            if (title) titles.add(title);
+        });
 
-    elements.forEach(element => {
-        const className = element.className;
-        // 检查 className 是否为字符串
-        if (typeof className === 'string' && className.length > 0) {
-            className.split(/\s+/).forEach(cls => classes.add(cls));
-        }
-        const id = element.id;
-        if (typeof id === 'string' && id.length > 0) {
-            ids.add(id);
-        }
+        return {
+            uniqueClasses: Array.from(classes),
+            uniqueIds: Array.from(ids),
+            uniqueTitles: Array.from(titles)
+        };
+    }
 
-        const title = element.getAttribute('title');
-        if (title) {
-            titles.add(title);
-        }
-    });
+    function checkIsExist() {
+        const { uniqueClasses, uniqueIds, uniqueTitles } = getUniqueClassIdTitle();
+        return targetNames.some(name =>
+            uniqueClasses.includes(name) ||
+            uniqueIds.includes(name) ||
+            uniqueTitles.includes(name)
+        );
+    }
 
-    const uniqueClasses = Array.from(classes);
-    const uniqueIds = Array.from(ids);
-    const uniqueTitles = Array.from(titles);
+    function createButton() {
+        const btn = document.createElement("button");
+        btn.id = "cxfl-BTT-btn";
+        btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-    // console.log(uniqueClasses);
-    // console.log(uniqueIds);
+        Object.assign(btn.style, {
+            display: "none",
+            position: "fixed",
+            bottom: "80px",
+            right: "20px",
+            zIndex: "99999",
+            border: "2px solid black",
+            backgroundColor: "white",
+            borderRadius: "10px",
+            cursor: "pointer",
+            padding: "7px",
+            outline: "none",
+            transition: "background-color 0.5s, color 0.5s"
+        });
 
-    return { uniqueClasses, uniqueIds, uniqueTitles };
-}
+        const svg = btn.querySelector("svg");
+        svg.style.transition = "stroke 0.5s";
 
-function checkIsExist() {
-    const { uniqueClasses, uniqueIds, uniqueTitles } = getUniqueClassIdTitle();
+        let hideTimeout;
 
-    const isExist = targetNames.some(name => uniqueClasses.includes(name) || uniqueIds.includes(name) || uniqueTitles.includes(name));
+        btn.addEventListener("mouseover", () => {
+            clearTimeout(hideTimeout);
+            btn.style.backgroundColor = "black";
+            svg.querySelector("path").style.stroke = "white";
+        });
 
-    return isExist;
-}
-
-
-let timeoutIds = [];
-// 创建按钮
-const btn = document.createElement("button");
-btn.id = "cxfl-BTT-btn";
-
-// SVG图标作为按钮内容
-btn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 19V5M5 12l7-7 7 7" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-// 按钮CSS
-btn.style.display = "none"; // 默认隐藏
-btn.style.position = "fixed"; // 固定在页面
-btn.style.bottom = "80px"; // 距离底部80像素
-btn.style.right = "20px"; // 距离右侧20像素
-btn.style.zIndex = "99"; // 确保按钮在最前
-btn.style.border = "2px solid black"; // 黑色边框
-btn.style.backgroundColor = "white"; // 按钮白色背景
-btn.style.borderRadius = "10px"; // 按钮圆角
-btn.style.cursor = "pointer"; // 鼠标悬停时光标变为指针
-btn.style.padding = "7px"; // 按钮内边距
-btn.style.outline = "none"; // 无外边框
-btn.style.transition = "background-color 0.5s, color 0.5s"; // 渐变效果
-
-// SVG样式
-const svg = btn.querySelector("svg");
-svg.style.transition = "stroke 0.5s";
-
-// 悬停时反转颜色
-btn.onmouseover = function () {
-    timeoutIds.forEach(clearTimeout);
-    btn.style.backgroundColor = "black";
-    svg.querySelector("path").style.stroke = "white";
-};
-btn.onmouseout = function () {
-    btn.style.backgroundColor = "white";
-    svg.querySelector("path").style.stroke = "black";
-    delayHide(3000);
-};
-
-// 点击时平滑滚动到顶部
-btn.addEventListener("click", () => {
-    btn.style.backgroundColor = "black";
-    svg.querySelector("path").style.stroke = "white";
-    let timer = setInterval(function () {
-        var distanceY = document.documentElement.scrollTop || document.body.scrollTop;//兼容
-        if (distanceY == 0) {
-            clearInterval(timer);
+        btn.addEventListener("mouseout", () => {
             btn.style.backgroundColor = "white";
             svg.querySelector("path").style.stroke = "black";
+            delayHide();
+        });
+
+        btn.addEventListener("click", () => {
+            btn.style.backgroundColor = "black";
+            svg.querySelector("path").style.stroke = "white";
+            smoothScrollToTop();
+        });
+
+        document.body.appendChild(btn);
+
+        function delayHide() {
+            clearTimeout(hideTimeout);
+            hideTimeout = setTimeout(() => {
+                btn.style.display = "none";
+            }, 3000);
+        }
+
+        function smoothScrollToTop() {
+            const scrollToTop = () => {
+                const c = document.documentElement.scrollTop || document.body.scrollTop;
+                if (c > 0) {
+                    window.requestAnimationFrame(scrollToTop);
+                    window.scrollTo(0, c - c / 8);
+                } else {
+                    btn.style.backgroundColor = "white";
+                    svg.querySelector("path").style.stroke = "black";
+                }
+            };
+            scrollToTop();
+        }
+
+        return { btn, delayHide };
+    }
+
+    function init() {
+        if (checkIsExist()) {
+            console.log("该网站存在回到顶部按钮！");
             return;
         }
-        var speed = Math.ceil(distanceY / 16) + 5;//speed先快后慢
-        document.documentElement.scrollTop = distanceY - speed;
-    }, 10);
-});
 
-// 将按钮添加到页面中
-document.documentElement.appendChild(btn);
+        console.log("页面不存在回到顶部按钮，启动生成！");
+        const { btn, delayHide } = createButton();
 
+        function scrollFunction() {
+            if (window.innerWidth < 1000) {
+                btn.style.display = "none";
+            } else if (document.documentElement.scrollTop > 20 || document.body.scrollTop > 20) {
+                btn.style.display = "block";
+                delayHide();
+            } else {
+                btn.style.display = "none";
+            }
+        }
 
-function delayHide(delay) {
-    timeoutIds.forEach(clearTimeout);
-    const id = setTimeout(() => {
-        btn.style.display = "none";
-    }, delay);
-    timeoutIds.push(id);
-}
+        window.addEventListener("scroll", scrollFunction);
+        window.addEventListener("resize", scrollFunction);
 
-function scrollFunction() {
-    timeoutIds.forEach(clearTimeout);
-    if (window.innerWidth < 1000) {
-        btn.style.display = "none";
-    } else if (document.body.scrollTop > 160 || document.documentElement.scrollTop > 160) {
-        btn.style.display = "block";
-        delayHide(3000);
-    } else {
-        btn.style.display = "none";
-    }
-}
-
-
-if (!checkIsExist()) {
-    console.log("页面不存在回到顶部按钮，启动生成！");
-
-    // 当页面滚动时检查是否显示按钮
-    document.addEventListener("scroll", scrollFunction, true);
-
-    // 初始检查窗口宽度
-    if (window.innerWidth >= 1000) {
+        // 初始检查
         scrollFunction();
     }
 
-    // 当窗口大小改变时检查窗口宽度
-    window.onresize = function () {
-        scrollFunction();
-    };
-}
+    // 等待页面完全加载后再执行脚本
+    window.addEventListener('load', init);
+})();
+
