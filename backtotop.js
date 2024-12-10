@@ -6,6 +6,7 @@
 // @author      cxfl
 // @description 2024/12/10 09:37:32
 // @exclude-match        *://www.crxsoso.com/*
+// @exclude-match        *://sanhua.himrr.com/*
 // ==/UserScript==
 
 (function () {
