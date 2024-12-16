@@ -2,9 +2,9 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     1.4
+// @version     1.5
 // @author      cxfl
-// @description 2024/12/10 09:37:32
+// @description 2024/12/16 19:42:52
 // @exclude-match        *://www.crxsoso.com/*
 // @exclude-match        *://sanhua.himrr.com/*
 // ==/UserScript==
@@ -12,7 +12,7 @@
 (function () {
     'use strict';
 
-    const targetNames = ["gotop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top", "scroll-top", "backtop", "arco-icon-arrow-up"];
+    const targetNames = ["gotop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top", "scroll-top", "backtop", "arco-icon-arrow-up", "comp__SsBacktop", "ast-scroll-top"];
 
     function getUniqueClassIdTitle() {
         const classes = new Set();
