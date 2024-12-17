@@ -2,11 +2,12 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     1.5
+// @version     1.6
 // @author      cxfl
-// @description 2024/12/16 19:42:52
+// @description 2024/12/18 02:04:22
 // @exclude-match        *://www.crxsoso.com/*
 // @exclude-match        *://sanhua.himrr.com/*
+// @exclude-match        *://abhisaha.com/*
 // ==/UserScript==
 
 (function () {
