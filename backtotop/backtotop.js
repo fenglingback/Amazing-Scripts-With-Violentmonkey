@@ -124,6 +124,7 @@
         const { btn, delayHide } = createButton();
 
         function scrollFunction() {
+            console.log("滚动事件触发！");
             if (window.innerWidth < 1000) {
                 btn.style.display = "none";
             } else if (document.documentElement.scrollTop > 20 || document.body.scrollTop > 20) {
