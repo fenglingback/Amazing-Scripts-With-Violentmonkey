@@ -2,7 +2,7 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     1.6
+// @version     1.7
 // @author      cxfl
 // @description 2024/12/18 02:04:22
 // @exclude-match        *://www.crxsoso.com/*
@@ -99,10 +99,10 @@
 
         function smoothScrollToTop() {
             const scrollToTop = () => {
-                const c = document.documentElement.scrollTop || document.body.scrollTop;
+                const c = scrollContainer.scrollTop;
                 if (c > 0) {
                     window.requestAnimationFrame(scrollToTop);
-                    window.scrollTo(0, c - c / 8);
+                    scrollContainer.scrollTo(0, c - c / 8);
                 } else {
                     btn.style.backgroundColor = "white";
                     svg.querySelector("path").style.stroke = "black";
@@ -114,6 +114,16 @@
         return { btn, delayHide };
     }
 
+    function findScrollContainer() {
+        const elements = [document.documentElement, document.body, ...document.body.children];
+        for (const el of elements) {
+            if (el.scrollHeight > el.clientHeight) {
+                return el;
+            }
+        }
+        return window;
+    }
+
     function init() {
         if (checkIsExist()) {
             console.log("该网站存在回到顶部按钮！");
@@ -123,6 +133,7 @@
         console.log("页面不存在回到顶部按钮，启动生成！");
         const { btn, delayHide } = createButton();
 
+        const scrollContainer = findScrollContainer();
         let lastKnownScrollPosition = 0;
         let ticking = false;
 
@@ -138,7 +149,7 @@
         }
 
         function onScroll() {
-            lastKnownScrollPosition = window.pageYOffset;
+            lastKnownScrollPosition = scrollContainer.scrollTop;
 
             if (!ticking) {
                 window.requestAnimationFrame(() => {
@@ -150,7 +161,7 @@
             }
         }
 
-        window.addEventListener("scroll", onScroll, { passive: true });
+        scrollContainer.addEventListener("scroll", onScroll, { passive: true });
         window.addEventListener("resize", onScroll, { passive: true });
 
         // 初始检查
