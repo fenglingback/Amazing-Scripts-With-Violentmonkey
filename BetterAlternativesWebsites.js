@@ -11,7 +11,7 @@
 
 
 var newURL = "";
-const best_gh_raw = "https://g.3344550.xyz/";
+const best_gh_raw = "https://gh-proxy.com/";
 const best_quora = "https://quetre.iket.me";
 const best_reddit = "https://rl.bloat.cat";
 
