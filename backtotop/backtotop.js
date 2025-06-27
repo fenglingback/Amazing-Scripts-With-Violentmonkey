@@ -2,7 +2,7 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     1.6
+// @version     1.6.1
 // @author      cxfl
 // @description 2024/12/18 02:04:22
 // @exclude-match        *://www.crxsoso.com/*
@@ -124,7 +124,7 @@
         const { btn, delayHide } = createButton();
 
         function scrollFunction() {
-            console.log("滚动事件触发！");
+            // console.log("滚动事件触发！");
             if (window.innerWidth < 1000) {
                 btn.style.display = "none";
             } else if (document.documentElement.scrollTop > 20 || document.body.scrollTop > 20) {
