@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Better alternatives to websites
 // @description:zh-CN   网站的更好替代
-// @version     1.0.1
+// @version     1.0.2
 // @match       *://raw.githubusercontent.com/*
 // @match       *://www.quora.com/*
 // @match       *://www.reddit.com/*
