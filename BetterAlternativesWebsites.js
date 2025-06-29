@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Better alternatives to websites
 // @description:zh-CN   网站的更好替代
-// @version     1.0.2
+// @version     1.0.3
 // @match       *://raw.githubusercontent.com/*
 // @match       *://www.quora.com/*
 // @match       *://www.reddit.com/*
@@ -12,7 +12,7 @@
 
 
 var newURL = "";
-const best_gh_raw = "https://gitproxy.click/";
+const best_gh_raw = "https://git.40609891.xyz/";
 const best_quora = "https://quetre.iket.me";
 const best_reddit = "https://rl.bloat.cat";
 
