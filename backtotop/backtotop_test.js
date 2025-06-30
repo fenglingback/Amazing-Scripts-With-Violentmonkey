@@ -2,7 +2,7 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     1.7
+// @version     1.7.0
 // @author      cxfl
 // @description 2024/12/18 02:04:22
 // @exclude-match        *://www.crxsoso.com/*
@@ -14,6 +14,8 @@
     'use strict';
 
     const targetNames = ["gotop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top", "scroll-top", "backtop", "arco-icon-arrow-up", "comp__SsBacktop", "ast-scroll-top"];
+
+    let isScrolling = false;
 
     function getUniqueClassIdTitle() {
         const classes = new Set();
@@ -98,30 +100,22 @@
         }
 
         function smoothScrollToTop() {
+            isScrolling = true;
             const scrollToTop = () => {
-                const c = scrollContainer.scrollTop;
+                const c = document.documentElement.scrollTop || document.body.scrollTop;
                 if (c > 0) {
                     window.requestAnimationFrame(scrollToTop);
-                    scrollContainer.scrollTo(0, c - c / 8);
+                    window.scrollTo(0, c - c / 8);
                 } else {
                     btn.style.backgroundColor = "white";
                     svg.querySelector("path").style.stroke = "black";
+                    isScrolling = false; // 滚动完成，重置标志
                 }
             };
             scrollToTop();
         }
 
         return { btn, delayHide };
-    }
-
-    function findScrollContainer() {
-        const elements = [document.documentElement, document.body, ...document.body.children];
-        for (const el of elements) {
-            if (el.scrollHeight > el.clientHeight) {
-                return el;
-            }
-        }
-        return window;
     }
 
     function init() {
@@ -133,14 +127,18 @@
         console.log("页面不存在回到顶部按钮，启动生成！");
         const { btn, delayHide } = createButton();
 
-        const scrollContainer = findScrollContainer();
-        let lastKnownScrollPosition = 0;
-        let ticking = false;
+        function scrollFunction() {
+            // console.log("滚动事件触发！");
+            if (isScrolling) {
+                // 如果正在滚动到顶部，则取消操作
+                window.cancelAnimationFrame(scrollToTop);
+                isScrolling = false;
+                return;
+            }
 
-        function updateScrollPosition(scrollPos) {
             if (window.innerWidth < 1000) {
                 btn.style.display = "none";
-            } else if (scrollPos > 20) {
+            } else if (document.documentElement.scrollTop > 20 || document.body.scrollTop > 20) {
                 btn.style.display = "block";
                 delayHide();
             } else {
@@ -148,46 +146,14 @@
             }
         }
 
-        function onScroll() {
-            lastKnownScrollPosition = scrollContainer.scrollTop;
-
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    updateScrollPosition(lastKnownScrollPosition);
-                    ticking = false;
-                });
-
-                ticking = true;
-            }
-        }
-
-        scrollContainer.addEventListener("scroll", onScroll, { passive: true });
-        window.addEventListener("resize", onScroll, { passive: true });
+        window.addEventListener("scroll", scrollFunction);
+        window.addEventListener("resize", scrollFunction);
 
         // 初始检查
-        onScroll();
-
-        // 监听 DOM 变化，以防止动态加载的内容影响滚动检测
-        const observer = new MutationObserver(() => {
-            onScroll();
-        });
-
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-
-        // 定期检查滚动位置，以防其他方法失效
-        setInterval(onScroll, 1000);
+        scrollFunction();
     }
 
-    // 使用 requestIdleCallback 或 setTimeout 来延迟初始化，确保不会影响页面加载性能
-    if ('requestIdleCallback' in window) {
-        requestIdleCallback(() => {
-            init();
-        });
-    } else {
-        setTimeout(init, 1000);
-    }
+    // 等待页面完全加载后再执行脚本
+    window.addEventListener('load', init);
 })();
 
