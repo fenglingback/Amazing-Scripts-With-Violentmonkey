@@ -12,7 +12,7 @@
 
 
 var newURL = "";
-const best_gh_raw = "https://git.40609891.xyz/";
+const best_gh_raw = "https://gh-proxy.net/";
 const best_quora = "https://quetre.iket.me";
 const best_reddit = "https://rl.bloat.cat";
 
