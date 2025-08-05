@@ -2,7 +2,7 @@
 // @name        back to top
 // @namespace   Violentmonkey Scripts
 // @grant       none
-// @version     1.6.1
+// @version     1.6.2
 // @author      cxfl
 // @description 2024/12/18 02:04:22
 // @exclude-match        *://www.crxsoso.com/*
@@ -100,12 +100,15 @@
         function smoothScrollToTop() {
             const scrollToTop = () => {
                 const c = document.documentElement.scrollTop || document.body.scrollTop;
-                if (c > 0) {
-                    window.requestAnimationFrame(scrollToTop);
-                    window.scrollTo(0, c - c / 8);
-                } else {
+                if (c === 0) {
                     btn.style.backgroundColor = "white";
                     svg.querySelector("path").style.stroke = "black";
+                } else {
+                    // 平滑滚动
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
                 }
             };
             scrollToTop();
