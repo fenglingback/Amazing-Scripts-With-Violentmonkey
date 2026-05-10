@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Better alternatives to websites
 // @description:zh-CN   网站的更好替代
-// @version     1.0.5
+// @version     1.0.6
 // @match       *://raw.githubusercontent.com/*
 // @match       *://www.quora.com/*
 // @match       *://www.reddit.com/*
@@ -14,7 +14,7 @@
 var newURL = "";
 const best_gh_raw = "https://gh-proxy.com/";
 const best_quora = "https://quetre.iket.me";
-const best_reddit = "https://rl.bloat.cat";
+const best_reddit = "https://redlib.perennialte.ch";
 
 switch (location.host) {
     case "raw.githubusercontent.com":
