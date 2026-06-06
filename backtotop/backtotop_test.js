@@ -15,7 +15,7 @@
 
     const targetNames = ["gotop", "back-to-top", "top", "bottom-24", "fabtn_back_to_top", "返回顶部", "go-up", "top-link", "fbth-scrolltotop", "backToTop", "ghd-scroll-to-top", "return-img-box", "scrollUpButton-zhwiki", "goTop", "go2top", "scroll-top", "backtop", "arco-icon-arrow-up", "comp__SsBacktop", "ast-scroll-top"];
 
-    let isScrolling = false;
+    let scrollAgain = false;
 
     function getUniqueClassIdTitle() {
         const classes = new Set();
